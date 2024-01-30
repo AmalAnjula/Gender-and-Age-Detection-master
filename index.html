@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slideshow</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+{% for image_path in image_paths %}
+    <img src="{{ image_path }}" id="fullscreenImage" style="opacity: 0">
+{% endfor %}
+
+<script>
+    var images = document.querySelectorAll('#fullscreenImage');
+    var currentIndex = 0;
+
+    function showImage(index) {
+        images.forEach(img => img.style.opacity = 0);
+        images[index].style.opacity = 1;
+    }
+
+    function toggleFullScreen() {
+        var elem = document.documentElement;
+
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    function startSlideshow() {
+        setInterval(function() {
+            currentIndex = (currentIndex + 1) % images.length;
+            showImage(currentIndex);
+        }, 5000);
+    }
+
+    // Start the slideshow after the page loads
+    window.onload = function() {
+        showImage(currentIndex);
+        startSlideshow();
+    };
+</script>
+
+</body>
+</html>
