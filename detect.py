@@ -6,7 +6,8 @@ import argparse
 import threading
 import time
 import numpy as np
-from scipy.stats import mode
+import statistics
+import subprocess as sp
 counter=0
 
 global v_thread
@@ -35,12 +36,29 @@ def highlightFace(net, frame, conf_threshold=0.7):
     return frameOpencvDnn,faceBoxes
 
 def worker_function():
-    global counter,v_thread
-    """Function to be executed in a virtual thread."""
-    while(v_thread):
-        counter=counter+1
+    
+
+
+    try:
+        sp.run(['taskkill /f /FI "WINDOWTITLE eq Slidshow*"']) 
         time.sleep(1)
-        print(v_thread)
+
+    except:
+        print("error stop add")
+        
+    try:
+
+        
+            # Path to the Python script you want to run
+        script_path = r"C:\Users\Amal\Downloads\Gender-and-Age-Detection-master\addrun.py"
+        # Run the script
+        sp.run(["python", script_path])
+
+
+    except:
+        print("error run adds")
+
+
         
 
 parser=argparse.ArgumentParser()
@@ -67,11 +85,18 @@ video=cv2.VideoCapture(args.image if args.image else 0)
 padding=20
 
 
-# Create a virtual thread
-virtual_thread = threading.Thread(target=worker_function)
 
-# Start the virtual thread
-#virtual_thread.start()
+
+
+
+def writeInfo(fileInfo):
+
+    fileInfo=fileInfo.replace(" ", "")
+    f = open("first_characters.txt", "w")
+    f.write(fileInfo)
+    f.close()
+
+
 
 old_time=time.time()
 while cv2.waitKey(1)<0 :
@@ -84,8 +109,20 @@ while cv2.waitKey(1)<0 :
         #print(counter)
         if(counter>5):
             counter=0
-            print (np.unique( array))
+            #find unique values in array along with their counts
+            #vals, counts = np.unique(array, return_counts=True)
+            #find mode
+            #mode_value = np.argwhere(counts == np.max(counts))
+
+            print (statistics.mode(array))
+            writeInfo(statistics.mode(array))
             array.clear()
+
+                        # Create a virtual thread
+            virtual_thread = threading.Thread(target=worker_function)
+
+            # Start the virtual thread
+            virtual_thread.start()
          
 
     
@@ -117,6 +154,8 @@ while cv2.waitKey(1)<0 :
         agePreds=ageNet.forward()
         age=ageList[agePreds[0].argmax()]
         #print(f'Age: {age[1:-1]} years')
+
+        #print(f'Age: {age[1:-1]} y Gender: {gender}')
         #print(counter)
 
         cv2.putText(resultImg, "Counter "+str(counter),(10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,255), 2, cv2.LINE_AA)
