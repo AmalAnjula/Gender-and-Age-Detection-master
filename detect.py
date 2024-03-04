@@ -50,7 +50,7 @@ def worker_function():
 
         
             # Path to the Python script you want to run
-        script_path = r"C:\Users\Amal\Downloads\Gender-and-Age-Detection-master\addrun.py"
+        script_path = r"C:\Users\Amal\Downloads\Gender-and-Age-Detection-master\vidRunner.py"
         # Run the script
         sp.run(["python", script_path])
 
